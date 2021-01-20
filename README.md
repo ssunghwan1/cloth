@@ -131,7 +131,7 @@
 cd order
 mvn spring-boot:run
 
-cd delivery
+cd review
 mvn spring-boot:run 
 
 cd customercenter
@@ -197,13 +197,13 @@ public class Order {
         //Following code causes dependency to external APIs
         // it is NOT A GOOD PRACTICE. instead, Event-Policy mapping is recommended.
 
-        clothrental.external.Cancellation cancellation = new clothrental.external.Cancellation();
+        clothrental.external.Reviewed reviewed = new clothrental.external.Reviewed();
         // mappings goes here
         // 아래 this는 Order 어그리게이트
-        cancellation.setOrderId(this.getId());
-        cancellation.setStatus("Delivery Cancelled");
-        OrderApplication.applicationContext.getBean(clothrental.external.CancellationService.class)
-                .cancelship(cancellation);
+        reviewed.setOrderId(this.getId());
+        reviewed.setStatus("Delivery Cancelled");
+        OrderApplication.applicationContext.getBean(clothrental.external.ReviewedService.class)
+                .cancelship(reviewed);
 
     }
 
@@ -216,13 +216,13 @@ public class Order {
         //Following code causes dependency to external APIs
         // it is NOT A GOOD PRACTICE. instead, Event-Policy mapping is recommended.
 
-        clothrental.external.Cancellation cancellation = new clothrental.external.Cancellation();
+        clothrental.external.Reviewed reviewed = new clothrental.external.Reviewed();
         // mappings goes here
         // 아래 this는 Order 어그리게이트
-        cancellation.setOrderId(this.getId());
-        cancellation.setStatus("Delivery Cancelled");
-        OrderApplication.applicationContext.getBean(clothrental.external.CancellationService.class)
-            .cancelship(cancellation);
+        reviewed.setOrderId(this.getId());
+        reviewed.setStatus("Delivery Cancelled");
+        OrderApplication.applicationContext.getBean(clothrental.external.ReviewedService.class)
+            .cancelship(reviewed);
 
 
     }
@@ -275,8 +275,8 @@ public interface OrderRepository extends PagingAndSortingRepository<Order, Long>
 # order 서비스의 주문처리
 http http://order:8080/orders productId=1001 qty=5 status=Order
 
-# delivery 서비스의 배송취소처리
-http http://delivery:8080/cancellations orderId=1 status="Delivery Cancelled"
+# review 서비스의 배송취소처리
+http http://review:8080/cancellations orderId=1 status="Delivery Cancelled"
 
 # 주문 상태 확인
 http http://20.194.37.221:8080/mypages
@@ -287,7 +287,7 @@ http http://customercenter:8080/mypages
 
 ## 동기식 호출 과 Fallback 처리
 
-분석단계에서의 조건 중 하나로 주문(order)->배송취소(cancellation) 간의 호출은 동기식 일관성을 유지하는 트랜잭션으로 처리하기로 하였다. 호출 프로토콜은 이미 앞서 Rest Repository 에 의해 노출되어있는 REST 서비스를 FeignClient 를 이용하여 호출하도록 한다. 
+분석단계에서의 조건 중 하나로 주문(order)->배송취소(reviewed) 간의 호출은 동기식 일관성을 유지하는 트랜잭션으로 처리하기로 하였다. 호출 프로토콜은 이미 앞서 Rest Repository 에 의해 노출되어있는 REST 서비스를 FeignClient 를 이용하여 호출하도록 한다. 
 
 - 배송서비스를 호출하기 위하여 Stub과 (FeignClient) 를 이용하여 Service 대행 인터페이스 (Proxy) 를 구현 
 
@@ -303,11 +303,11 @@ import org.springframework.web.bind.annotation.RequestMethod;
 
 import java.util.Date;
 
-@FeignClient(name="delivery", url="${api.delivery.url}")
+@FeignClient(name="review", url="${api.review.url}")
 public interface CancellationService {
 
     @RequestMapping(method= RequestMethod.POST, path="/cancellations")
-    public void cancelship(@RequestBody Cancellation cancellation);
+    public void cancelship(@RequestBody Cancellation reviewed);
 
 }
 ```
@@ -326,13 +326,13 @@ public interface CancellationService {
         //Following code causes dependency to external APIs
         // it is NOT A GOOD PRACTICE. instead, Event-Policy mapping is recommended.
 
-        clothrental.external.Cancellation cancellation = new clothrental.external.Cancellation();
+        clothrental.external.Reviewed reviewed = new clothrental.external.Reviewed();
         // mappings goes here
         // 아래 this는 Order 어그리게이트
-        cancellation.setOrderId(this.getId());
-        cancellation.setStatus("Delivery Cancelled");
-        OrderApplication.applicationContext.getBean(clothrental.external.CancellationService.class)
-                .cancelship(cancellation);
+        reviewed.setOrderId(this.getId());
+        reviewed.setStatus("Delivery Cancelled");
+        OrderApplication.applicationContext.getBean(clothrental.external.ReviewedService.class)
+                .cancelship(reviewed);
 
     }
 ```
@@ -341,13 +341,13 @@ public interface CancellationService {
 
 
 ```
-# 배송 (delivery) 서비스를 잠시 내려놓음 (ctrl+c)
+# 배송 (review) 서비스를 잠시 내려놓음 (ctrl+c)
 
 #주문취소처리
 http PATCH http://order:8080/orders/2 status="Delivery Cancelled"   #Fail
 
 #배송서비스 재기동
-cd delivery
+cd review
 mvn spring-boot:run
 
 #주문취소처리
@@ -437,11 +437,11 @@ public class PolicyHandler{
 
         if(ordered.isMe()){
             // To-Do : SMS발송, CJ Logistics 연계, ...
-            Delivery delivery = new Delivery();
-            delivery.setOrderId(ordered.getId());
-            delivery.setStatus("Delivery Started");
+            Delivery review = new Delivery();
+            review.setOrderId(ordered.getId());
+            review.setStatus("Delivery Started");
 
-            deliveryRepository.save(delivery);
+            deliveryRepository.save(review);
 
             System.out.println("##### listener Ship : " + ordered.toJson());
         }
@@ -452,11 +452,11 @@ public class PolicyHandler{
 
         if(returned.isMe()){
             // To-Do : SMS발송, CJ Logistics 연계, ...
-            Delivery delivery = new Delivery();
-            delivery.setOrderId(returned.getId());
-            delivery.setStatus("Return Started");
+            Delivery review = new Delivery();
+            review.setOrderId(returned.getId());
+            review.setStatus("Return Started");
 
-            deliveryRepository.save(delivery);
+            deliveryRepository.save(review);
 
             System.out.println("##### listener Ship : " + returned.toJson());
         }
@@ -499,14 +499,14 @@ public class Delivery {
 http http://order:8080/orders productId=1001 qty=5 status=Order   #Success
 
 #배송목록 확인
-http http://delivery:8080/deliveries    # 배송 목록이 조회안됨
+http http://review:8080/deliveries    # 배송 목록이 조회안됨
 
 #배송 서비스 기동
-cd delivery
+cd review
 mvn spring-boot:run
 
 #배송목록 확인
-http http://delivery:8080/deliveries     # 모든 주문의 목록이 조회됨
+http http://review:8080/deliveries     # 모든 주문의 목록이 조회됨
 ```
 
 ```
@@ -554,7 +554,7 @@ http http://customercenter:8080/mypages     # 모든 주문의 목록이 조회�
 
 * 서킷 브레이킹 프레임워크의 선택: Spring FeignClient + Hystrix 옵션을 사용하여 구현함
 
-시나리오는 주문(order)-->배송취소(delivery) 시의 연결을 RESTful Request/Response 로 연동하여 구현이 되어있고, 결제 요청이 과도할 경우 CB 를 통하여 장애격리.
+시나리오는 주문(order)-->배송취소(review) 시의 연결을 RESTful Request/Response 로 연동하여 구현이 되어있고, 결제 요청이 과도할 경우 CB 를 통하여 장애격리.
 
 - Hystrix 를 설정:  요청처리 쓰레드에서 처리시간이 610 밀리가 넘어서기 시작하여 어느정도 유지되면 CB 회로가 닫히도록 (요청을 빠르게 실패처리, 차단) 설정
 ```
@@ -572,13 +572,13 @@ hystrix:
 
 ```
 
-- 피호출 서비스(배송:cancellation) 의 임의 부하 처리 - 500 밀리에서 증감 220 밀리 정도 왔다갔다 하게, Thread.currentThread().sleep((long) (500 + Math.random() * 220));
+- 피호출 서비스(배송:reviewed) 의 임의 부하 처리 - 500 밀리에서 증감 220 밀리 정도 왔다갔다 하게, Thread.currentThread().sleep((long) (500 + Math.random() * 220));
 ```
-# (delivery) cancellation.java (Entity)
+# (review) reviewed.java (Entity)
 
     @PrePersist
     public void onPrePersist(){
-        System.out.println("################# cancellation start");
+        System.out.println("################# reviewed start");
 
         try {
             Thread.currentThread().sleep((long) (500 + Math.random() * 220));
@@ -628,17 +628,17 @@ kubectl get deploy order -w
 
 * 먼저 무정지 재배포가 100% 되는 것인지 확인하기 위해서 Autoscaler 이나 CB 설정을 제거함
 
-delivery 에 deployment.yaml readiness probe 없는 상태
+review 에 deployment.yaml readiness probe 없는 상태
 
 - seige 로 배포작업 직전에 워크로드를 모니터링 함.
 ```
-siege -c2 -t60S -v --content-type "application/json" 'http://delivery:8080/cancellations POST {"productId": "1001", "qty":5}'
+siege -c2 -t60S -v --content-type "application/json" 'http://review:8080/cancellations POST {"productId": "1001", "qty":5}'
 
 ```
 
 - 새버전으로의 배포 시작
 ```
-kubectl set image deployment/delivery delivery=clothrentalt.azurecr.io/delivery:latest --record
+kubectl set image deployment/review review=clothrentalt.azurecr.io/review:latest --record
 ```
 
 - seige 의 화면으로 넘어가서 Availability 가 100% 미만으로 떨어졌는지 확인

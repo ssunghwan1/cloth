@@ -33,4 +33,17 @@ public class PolicyHandler{
         }
     }
 
+    @StreamListener(KafkaProcessor.INPUT)
+    public void wheneverReviewed_UpdateStatus(@Payload Reviewed reviewed){
+
+        if(reviewed.isMe()){
+            Optional<Order> orderOptional = orderRepository.findById(reviewed.getId());
+            Order order = orderOptional.get();
+            order.setStatus(reviewed.getStatus());
+
+            orderRepository.save(order);
+            System.out.println("##### listener UpdateStatus : " + reviewed.toJson());
+        }
+    }
+
 }

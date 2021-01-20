@@ -22,7 +22,7 @@ public class Order {
     public void onPostPersist(){
         Order order = new Order();
         order.setStatus(order.getStatus());
-        System.out.println("##### Status : " + order.getStatus());
+        System.out.println("##### Status chk : " + order.getStatus());
 
         if (Objects.equals(status, "Order")) {
 
@@ -31,7 +31,6 @@ public class Order {
             ordered.publishAfterCommit();
         }
         if (Objects.equals(status, "Return")){
-
             Returned returned = new Returned();
             BeanUtils.copyProperties(this, returned);
             returned.publishAfterCommit();
