@@ -23,7 +23,16 @@ public class Review {
 
 
     }
+    @PrePersist
+    public void onPrePersist(){
+        System.out.println("################# Review start");
 
+        try {
+            Thread.currentThread().sleep((long) (500 + Math.random() * 220));
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
     @PostUpdate
     public void onPostUpdate(){
         System.out.println("################# Review Status Updated!!");
