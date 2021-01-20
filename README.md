@@ -611,11 +611,13 @@ hystrix:
 
 ```
 $ siege -c2 -t5S -v --content-type "application/json" 'http://order:8080/orders/1 PATCH {"status": "Delivery Cancelled"}'
+root@siege:/# siege -c100 -t5S -v --content-type "application/json" 'http://review:8080/reviews/2 PATCH {"status": "review" ,"coment":"conte3242nt"}'
 :
 :
 
 ```
 ![서킷브레이크결과](https://user-images.githubusercontent.com/66341540/105006247-bb9b6c80-5a79-11eb-9c29-f2b4827269d7.JPG)
+![서킷브레이커](https://user-images.githubusercontent.com/24729427/105172888-9be07300-5b63-11eb-86a5-d0e45f40edfc.PNG)
 
 - 운영시스템은 죽지 않고 지속적으로 CB 에 의하여 적절히 회로가 열림과 닫힘이 벌어지면서 자원을 보호하고 있음을 보여줌.
 
