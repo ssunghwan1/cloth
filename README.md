@@ -364,6 +364,8 @@ mvn spring-boot:run
 #주문취소처리
 http PATCH http://order:8080/orders/2 status="Delivery Cancelled"   #Success
 
+#리뷰작성
+http PATCH http://review:8080/reviews/1 status="reviewed" content="good good"
 ```
 
 ![배송서비스stop한상태](https://user-images.githubusercontent.com/66341540/105003606-35c9f200-5a76-11eb-8e06-5595b19d4c38.JPG)
@@ -371,6 +373,9 @@ http PATCH http://order:8080/orders/2 status="Delivery Cancelled"   #Success
 
 ![배송서비스active한상태](https://user-images.githubusercontent.com/66341540/105001947-dff44a80-5a73-11eb-9140-fc8aa9725aaa.JPG)
 
+
+![리뷰변경실패](https://user-images.githubusercontent.com/24729427/105152503-9fb3cb80-5b4a-11eb-8f01-c21a7c400df3.PNG)
+![리뷰변경성공](https://user-images.githubusercontent.com/24729427/105152507-a0e4f880-5b4a-11eb-8359-2beb0cd81492.PNG)
 
 - 또한 과도한 요청시에 서비스 장애가 도미노 처럼 벌어질 수 있다. (서킷브레이커, 폴백 처리는 운영단계에서 설명한다.)
 
