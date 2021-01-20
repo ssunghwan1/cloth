@@ -31,10 +31,13 @@
 1. 주문이 취소되면 배송이 취소된다
 1. 고객이 주문상태를 중간중간 조회한다
 1. 주문상태가 바뀔 때 마다 메일로 알림을 보낸다
+1. 고객 주문시 리뷰 요청을 발송한다.
+1. 고객이 리뷰를 완료하면 주문서에서 확인 가능하다.
 
 비기능적 요구사항
 1. 트랜잭션
     1. 고객의 주문 취소는 반드시 배송팀 배송취소가 전제되어야 한다  Sync 호출 
+    2. 리뷰 작성 완료시 주문팀의 정보가 확인되어야 한다 Sync 호출
 1. 장애격리
     1. 배송관리 기능이 수행되지 않더라도 주문은 365일 24시간 받을 수 있어야 한다  Async (event-driven), Eventual Consistency
     1. 배송이 과중되면 배송을 잠시동안 받지 않고 잠시후에 배송 처리 하도록 유도한다  Circuit breaker, fallback
@@ -113,6 +116,7 @@
 ### 완성된 모형
 
 ![image](https://user-images.githubusercontent.com/66341540/100956395-b763d000-355b-11eb-946d-1157cf5ba00e.png)
+![설계](https://user-images.githubusercontent.com/24729427/105149856-59a93880-5b47-11eb-96e2-791739fabf2a.PNG)
 
  
 ### 비기능 요구사항에 대한 검증
@@ -138,6 +142,9 @@ cd customercenter
 mvn spring-boot:run  
 
 cd gateway
+mvn spring-boot:run 
+
+cd review
 mvn spring-boot:run 
 ```
 
@@ -282,7 +289,11 @@ http http://review:8080/cancellations orderId=1 status="Delivery Cancelled"
 http http://20.194.37.221:8080/mypages
 http http://customercenter:8080/mypages
 
+# 리뷰 상태 확인
+http http://review:8080/reviews
 ```
+![리뷰조회](https://user-images.githubusercontent.com/24729427/105150185-c7edfb00-5b47-11eb-8fae-a303912fd454.PNG)
+
 
 
 ## 동기식 호출 과 Fallback 처리
@@ -353,6 +364,8 @@ mvn spring-boot:run
 #주문취소처리
 http PATCH http://order:8080/orders/2 status="Delivery Cancelled"   #Success
 
+#리뷰작성
+http PATCH http://review:8080/reviews/1 status="reviewed" content="good good"
 ```
 
 ![배송서비스stop한상태](https://user-images.githubusercontent.com/66341540/105003606-35c9f200-5a76-11eb-8e06-5595b19d4c38.JPG)
@@ -360,6 +373,9 @@ http PATCH http://order:8080/orders/2 status="Delivery Cancelled"   #Success
 
 ![배송서비스active한상태](https://user-images.githubusercontent.com/66341540/105001947-dff44a80-5a73-11eb-9140-fc8aa9725aaa.JPG)
 
+
+![리뷰변경실패](https://user-images.githubusercontent.com/24729427/105152503-9fb3cb80-5b4a-11eb-8f01-c21a7c400df3.PNG)
+![리뷰변경성공](https://user-images.githubusercontent.com/24729427/105152507-a0e4f880-5b4a-11eb-8359-2beb0cd81492.PNG)
 
 - 또한 과도한 요청시에 서비스 장애가 도미노 처럼 벌어질 수 있다. (서킷브레이커, 폴백 처리는 운영단계에서 설명한다.)
 
