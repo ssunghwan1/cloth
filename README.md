@@ -143,6 +143,9 @@ mvn spring-boot:run
 
 cd gateway
 mvn spring-boot:run 
+
+cd review
+mvn spring-boot:run 
 ```
 
 ## DDD 의 적용
@@ -286,7 +289,11 @@ http http://review:8080/cancellations orderId=1 status="Delivery Cancelled"
 http http://20.194.37.221:8080/mypages
 http http://customercenter:8080/mypages
 
+# 리뷰 상태 확인
+http http://review:8080/reviews
 ```
+![리뷰조회](https://user-images.githubusercontent.com/24729427/105150185-c7edfb00-5b47-11eb-8fae-a303912fd454.PNG)
+
 
 
 ## 동기식 호출 과 Fallback 처리
