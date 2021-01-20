@@ -16,6 +16,6 @@ spec:
     spec:
       containers:
         - name: delivery
-          image: clothrentalt.azurecr.io/delivery
+          image: clothrentalcsh.azurecr.io/delivery
           ports:
             - containerPort: 8080

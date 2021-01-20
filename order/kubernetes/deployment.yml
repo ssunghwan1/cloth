@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
         - name: order
-          image: clothrentalt.azurecr.io/order
+          image: clothrentalcsh.azurecr.io/order
           ports:
             - containerPort: 8080
           resources:
