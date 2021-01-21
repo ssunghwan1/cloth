@@ -648,6 +648,8 @@ kubectl get deploy order -w
 
 ![오토스케일부하후2](https://user-images.githubusercontent.com/24729427/105259848-f0b9d300-5bcf-11eb-87cb-b43e0a4a7e04.PNG)
 
+![HPA확인](https://user-images.githubusercontent.com/24729427/105260046-6887fd80-5bd0-11eb-83f0-e0e3b8f14320.PNG)
+
 ## 무정지 재배포
 
 * 먼저 무정지 재배포가 100% 되는 것인지 확인하기 위해서 Autoscaler 이나 CB 설정을 제거함
