@@ -687,6 +687,9 @@ kubectl apply -f kubernetes/deployment.yaml
 
 배포기간 동안 Availability 가 변화없기 때문에 무정지 재배포가 성공한 것으로 확인됨.
 
+무중단 배포 리드니스 여부에 따른 테스트 결과
+![무중단배포 리드니스제거](https://user-images.githubusercontent.com/24729427/105269256-ea7b2500-5bd6-11eb-9e74-cb7fd6882c22.PNG)
+![무중단배포성공](https://user-images.githubusercontent.com/24729427/105269259-eb13bb80-5bd6-11eb-940e-fcbbfea119d8.PNG)
 
 
 
